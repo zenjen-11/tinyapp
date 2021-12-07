@@ -54,6 +54,15 @@ app.get("/urls/:shortURL", (req, res) => {
   res.render("urls_show", templateVars);
 });
 
+app.get('/u/:shortURL', (req, res) => {
+  if (urlDatabase[req.params.shortURL]) {
+    res.redirect(longURL);
+  } else {
+    const errorMessage = 'This short URL does not exist.';
+    res.status(404).render('urls_error', {user: users[req.session.userID], errorMessage});
+  }
+});
+
 
 
 app.get("/urls.json", (req, res) => {
@@ -77,7 +86,7 @@ app.get("/set", (req, res) => {
   const forShortURL = generateRandomString() 
   urlDatabase[forShortURL] = req.body.longURL
   const templateVars = { urls: urlDatabase };
-  res.render("urls_index", templateVars);      // Respond with 'Ok' (we will replace this)
+  res.redirect(`/urls/${forShortURL}`);     // Respond with 'Ok' (we will replace this)
 });
 
 app.listen(PORT, () => {
