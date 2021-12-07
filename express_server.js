@@ -23,8 +23,6 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
-/*const bodyParser = require("body-parser");
-app.use(bodyParser.urlencoded({extended: true})); */
 
 // Request Routing
 
@@ -37,6 +35,11 @@ app.get("/urls", (req, res) => {
   res.render("urls_index", templateVars);
 });
 
+app.get("/urls/new", (req, res) => {
+  console.log("blah")
+  res.render('urls_new');
+});
+
 app.get("/urls/:shortURL", (req, res) => {
   const templateVars = { 
     shortURL: req.params.shortURL, 
@@ -45,10 +48,7 @@ app.get("/urls/:shortURL", (req, res) => {
   res.render("urls_show", templateVars);
 });
 
-app.get("/url/new", (req, res) => {
-  console.log("blah")
-  res.render('urls_new');
-});
+
 
 app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
@@ -69,7 +69,12 @@ app.get("/set", (req, res) => {
 
  app.post("/urls", (req, res) => {
   console.log(req.body);  // Log the POST request body to the console
-  res.send("Ok");         // Respond with 'Ok' (we will replace this)
+  const forShortURL = generateRandomString() 
+  urlDatabase[forShortURL] = req.body.longURL
+  //res.send("Ok");  
+  //res.render("urls_show") 
+  const templateVars = { urls: urlDatabase };
+  res.render("urls_index", templateVars);      // Respond with 'Ok' (we will replace this)
 });
 
 app.listen(PORT, () => {
