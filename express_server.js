@@ -1,12 +1,12 @@
 const express = require("express");
 const app = express();
 const PORT = 8080; // default port 8080
-
 const bodyParser = require("body-parser");
+
 app.use(bodyParser.urlencoded({extended: true}));
 app.set("view engine", "ejs");
 
-//// function
+//// Function
 
 const generateRandomString = function() {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -19,7 +19,7 @@ const generateRandomString = function() {
   return randomString;
 };
 
-//// variables
+//// Variables
 
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
@@ -32,7 +32,7 @@ const users = {};
 
 ////// ROUTING
 
-// root GET
+// Root GET
 
 app.get('/', (req, res) => {
   res.send("Home!");
@@ -102,6 +102,15 @@ app.post('/urls/:shortURL/delete', (req, res) => {
   } else {
     const errorMessage = 'You are not authorized to do that.';
     res.status(401).render('urls_error', {user: users[req.session.userID], errorMessage});
+  }
+});
+
+app.post('/urls/:shortURL/edit', (req, res) => {
+  if (!checkOwner(currentUser(req.session.userId, userDatabase), req.params.shortURL, urlDatabase)) {
+    res.send('This id does not belong to you');
+  } else {
+    urlDatabase[req.params.shortURL].longURL = req.body.longURL;
+    res.redirect('/urls');
   }
 });
 
