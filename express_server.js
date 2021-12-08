@@ -21,7 +21,12 @@ const generateRandomString = function() {
 
 //// variables
 
-const urlDatabase = {};
+const urlDatabase = {
+  "b2xVn2": "http://www.lighthouselabs.ca",
+  "9sm5xK": "http://www.google.com"
+};
+
+
 const users = {};
 
 
@@ -63,8 +68,6 @@ app.get('/u/:shortURL', (req, res) => {
   }
 });
 
-
-
 app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
@@ -79,7 +82,6 @@ app.get("/set", (req, res) => {
   res.send(`a = ${a}`);
  });
 
-
  ///// POST
  // urls post page 
  app.post("/urls", (req, res) => {
@@ -87,6 +89,20 @@ app.get("/set", (req, res) => {
   urlDatabase[forShortURL] = req.body.longURL
   const templateVars = { urls: urlDatabase };
   res.redirect(`/urls/${forShortURL}`);     // Respond with 'Ok' (we will replace this)
+});
+
+// delete url
+
+app.post('/urls/:shortURL/delete', (req, res) => {
+  const shortURL = req.params.shortURL;
+
+  if (req.session.userID  && req.session.userID === urlDatabase[shortURL].userID) {
+    delete urlDatabase[shortURL];
+    res.redirect('/urls');
+  } else {
+    const errorMessage = 'You are not authorized to do that.';
+    res.status(401).render('urls_error', {user: users[req.session.userID], errorMessage});
+  }
 });
 
 app.listen(PORT, () => {
