@@ -2,8 +2,10 @@ const express = require("express");
 const app = express();
 const PORT = 8080; // default port 8080
 const bodyParser = require("body-parser");
+const cookieParser = require("cookie-parser");
 
 app.use(bodyParser.urlencoded({extended: true}));
+app.use(cookieParser()); // bring in cookie-parser
 app.set("view engine", "ejs");
 
 //// Function
@@ -27,7 +29,13 @@ const urlDatabase = {
 };
 
 
-const users = {};
+const users = {
+  123: {
+    id: '123',
+    email: 'Johndoe@hotmail.com',
+    password: 'password'
+  }
+}
 
 
 ////// ROUTING
@@ -35,12 +43,17 @@ const users = {};
 // Root GET
 
 app.get('/', (req, res) => {
-  res.send("Home!");
+  if (req.session.userID) {
+    res.redirect('/urls');
+  } else {
+    res.redirect('/login');
+  }
 });
-
 // url index page
 app.get("/urls", (req, res) => {
-  const templateVars = { urls: urlDatabase };
+  const username = req.cookies.username;
+  console.log(username + 'Peanut butter');
+  const templateVars = { urls: urlDatabase, username:username };
   res.render("urls_index", templateVars);
 });
 
@@ -90,6 +103,41 @@ app.get("/set", (req, res) => {
   const templateVars = { urls: urlDatabase };
   res.redirect(`/urls/${forShortURL}`);     // Respond with 'Ok' (we will replace this)
 });
+
+// post login page
+app.post('/login', (req, res) => {
+  console.log('req.body', req.body)
+  const username = req.body.username;
+  const password = req.body.password;
+
+
+ /* if (!email || !password) {
+    return res.status(400).send("email and ")
+  }
+
+  const user = findUserByEmail(email);
+  console.log('user', user);
+  
+  if (!user) {
+    return res.status(400).send("a user with that email doesn't exist")
+  }
+
+  if (user.password !== password ){
+    return res.status(400).send('your password doesnt match');
+  } */
+
+  // happy path
+  res.cookie('username', username)
+  res.redirect ("/urls")
+
+
+  // res.send('you posted to login')
+
+})
+
+
+
+
 
 // delete url
 
