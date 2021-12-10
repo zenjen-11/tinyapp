@@ -11,7 +11,7 @@ app.set("view engine", "ejs");
 ///// Functions
 
 // Generate random string function
-const generateRandomString = function () {
+const generateRandomString = function() {
   const chars =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
   let randomString = "";
@@ -24,7 +24,7 @@ const generateRandomString = function () {
 };
 
 // Store old users and new users function
-const userByEmail = function (email, data) {
+const userByEmail = function(email, data) {
   for (const userr in data) {
     if (data[userr].email === email) {
       return data[userr];
@@ -34,7 +34,7 @@ const userByEmail = function (email, data) {
 };
 
 // store urls for users
-const urlsUser = function (id) {
+const urlsUser = function(id) {
   let userUrls = {};
 
   for (const shortURL in urlDatabase) {
@@ -53,9 +53,12 @@ const urlDatabase = {
 };
 
 const tinyURLusers = {
-  id: "123",
-  email: "Johndoe@hotmail.com",
-  password: "password",
+  "123": {
+    id: "133",
+    email: "Johndoe@hotmail.com",
+    password: "password",
+  }
+
 };
 
 ////// ROUTING
@@ -80,9 +83,14 @@ app.get("/urls", (req, res) => {
 
 // GET url new page
 app.get("/urls/new", (req, res) => {
-  console.log("blah");
   res.render("urls_new");
-});ß
+});
+
+//GET login page
+app.get("/login", (req, res) => {
+  const templateVars = { tinyURLusers: null };
+  res.render("urls_login", templateVars);
+});
 
 // GET url register page
 
@@ -145,26 +153,23 @@ app.post("/login", (req, res) => {
 });
 // POST register page
 app.post("/register", (req, res) => {
-  const tinyURLusers = req.body.tinyURLusers;
+  const email = req.body.email;
+  const password = req.body.password;
+  const id = generateRandomString();
+
   if (!email || !password) {
-    return res.status(400).send("email and password cannot be blank. ");
+    return res.status(400).send("Email and password cannot be blank.");
   }
-
-  if (findUserByEmail(email)) {
-    return res
-      .status(400)
-      .send("A user with that email exists. Use another email.");
+  if (userByEmail(email)) {
+    return res.status(400).send("A user with that email exists. Use another email.");
   }
-
-  const id = "abc"; // TODO: make a function to generate an id
   const user = {
-    id,
     email,
     password,
-  };
-  users[id] = user;
-  console.log(users);
-
+    id,
+  }
+  tinyURLusers[id] = user;
+  console.log(tinyURLusers);
   res.cookie("user_id", id);
   res.redirect("/urls");
 });
