@@ -12,17 +12,17 @@
 
   <body>
 
-    <%- include('partials/_header') %> 
+    <%- include('partials/_header') %>
 
     <main style="margin: 1em;">
-      <h4>Create TinyURL</h4>
-      <form class="form-inline" action="/urls" method="POST">
-        <div class="form-group mb-2">
-          <label style="color:rgb(127, 128, 131)" for="longURL">Enter a URL:</label>
-          <input class="form-control" type="text" name="longURL" placeholder="http://" style="width: 300px; margin: 1em">
-          <button type="submit" class="btn btn-primary">Submit</button>
+      <h4>Login</h4>
+        <div>
+          <form action="/login" method="POST">
+            <label style='margin-top:38px;margin-left:40px;margin-right:0;' >Enter Email</label>
+            <input type="email" name="user_id" placeholder="Enter email" style ="height: 20px margin-bottom: 20px padding: 0px">
+            <button type="submit" class="btn btn-primary btn-sm" style="margin: 0 auto;" href="/login">Log In</button>
+          </form>
         </div>
-      </form>
     </main>
       <!-- Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>

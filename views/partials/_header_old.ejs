@@ -1,3 +1,6 @@
+<link href="styles.css" rel="stylesheet" type="text/css">
+
+
 <header>
   <nav class="navbar navbar-expand-md navbar-dark bg-success" >
     <a class="navbar-brand" href="/urls">TinyApp</a>
@@ -11,22 +14,15 @@
       </div>
     </div>
     <div style="height: 100px; width: 400px;  ">
-      <% if (userID) { %>
-        <form action="/logout" method="POST">
-          <div>
-            Logged in as: <%= userID %>
-            <button type="submit" class="btn btn-success">Logout</button>
-          </div>
-        </form>
+<% if (tinyURLusers) { %>
+  <%= tinyURLusers %>
+  <% } %>
+  <form action="/login" method="POST">
+    <label style='margin-top:38px;margin-left:40px;margin-right:0;' >Enter Email</label>
+    <input type="email" name="user_id" placeholder="Enter email" style ="height: 20px margin-bottom: 20px padding: 0px">
+    <button type="submit" class="btn btn-primary btn-sm" style="margin: 0 auto;" href="/login">Log In</button>
+  </form>
 
-  <% } else { %>
-  <div style="margin-top:35px" height="42" width="42" >
-    <a href="/login" class="btn btn-success" role="button" aria-disabled="true" style="margin-left: 160px;">Login</a>
-    <a href="/register" class="btn btn-success" role="button" aria-disabled="true" style = "margin-left: 10px;">Register</a>
-  </div>
     </div>
-
-    <% } %>
   </nav>
 </header>
-

@@ -11,7 +11,7 @@ app.set("view engine", "ejs");
 ///// Functions
 
 // Generate random string function
-const generateRandomString = function() {
+const generateRandomString = function () {
   const chars =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
   let randomString = "";
@@ -25,6 +25,7 @@ const generateRandomString = function() {
 
 // Store old users and new users function
 const userByEmail = function(email, data) {
+  console.log('Hello', email, data)
   for (const userr in data) {
     if (data[userr].email === email) {
       return data[userr];
@@ -38,7 +39,7 @@ const urlsUser = function(id) {
   let userUrls = {};
 
   for (const shortURL in urlDatabase) {
-    if (urlDatabase[shortURL].userID === id) {
+    if (urlDatabase[shortURL].user_id === id) {
       userUrls[shortURL] = urlDatabase[shortURL];
     }
   }
@@ -53,12 +54,11 @@ const urlDatabase = {
 };
 
 const tinyURLusers = {
-  "123": {
-    id: "133",
+  123: {
+    id: "123",
     email: "Johndoe@hotmail.com",
     password: "password",
-  }
-
+  },
 };
 
 ////// ROUTING
@@ -66,7 +66,7 @@ const tinyURLusers = {
 // Root GET
 
 app.get("/", (req, res) => {
-  // if (req.session.userID) {
+  // if (req.cookies.user_id) {
   res.redirect("/urls");
   // } else {
   //   res.redirect('/login');
@@ -75,9 +75,10 @@ app.get("/", (req, res) => {
 
 // GET url index page
 app.get("/urls", (req, res) => {
-  const tinyURLusers = req.cookies["user_id"];
-  console.log(tinyURLusers);
-  const templateVars = { urls: urlDatabase, tinyURLusers: tinyURLusers };
+  console.log('anything', req.cookies)
+  const userID = req.cookies['user_id']
+  // const userUrls = urlsUser(userID, urlDatabase);
+  const templateVars = { urls: urlDatabase, userID };
   res.render("urls_index", templateVars);
 });
 
@@ -88,19 +89,29 @@ app.get("/urls/new", (req, res) => {
 
 //GET login page
 app.get("/login", (req, res) => {
-  const templateVars = { tinyURLusers: null };
+  console.log('cookies', req.cookies)
+  let userID = null
+  if (!req.cookies['user_id']) {
+    userID = null
+  } else {
+    userID = req.cookies['user_id']
+  }
+  const templateVars = {userID};
+  // const userUrls = urlsUser(user_id, urlDatabase);
   res.render("urls_login", templateVars);
 });
 
 // GET url register page
 
 app.get("/register", (req, res) => {
-  const templateVars = { tinyURLusers: null };
+  const templateVars = { tinyURLusers: '' };
   res.render("urls_register", templateVars);
 });
 
 // GET shortened url page that directs to url_show page
 app.get("/urls/:shortURL", (req, res) => {
+  const userID = req.cookies['user_id']
+  const userUrls = urlsUser(userID, urlDatabase);
   const templateVars = {
     shortURL: req.params.shortURL,
     longURL: urlDatabase[req.params.shortURL],
@@ -115,7 +126,7 @@ app.get("/u/:shortURL", (req, res) => {
     const errorMessage = "This short URL does not exist.";
     res
       .status(404)
-      .render("urls_error", { user: users[req.session.userID], errorMessage });
+      .render("urls_error", { user: users[req.cookies.user_id], errorMessage });
   }
 });
 
@@ -144,30 +155,41 @@ app.post("/urls", (req, res) => {
 // POST login page
 app.post("/login", (req, res) => {
   console.log("req.body", req.body);
-  const tinyURLusers = req.body.tinyURLusers;
+  const password = req.body.password;
+  const email = req.body.email;
+  const user = userByEmail(email, tinyURLusers);
+  console.log('popcorn', user)
+  
   // happy path
-  res.cookie("tinyURLusers", tinyURLusers);
-  res.redirect("/urls");
+  if(user) {
+    res.cookie("user_id", tinyURLusers[user.id].email);
+    res.redirect("/urls");
 
-  // res.send('you posted to login')
+  } else {
+    return res.status(403).send("user not found")
+  }
+
+
 });
 // POST register page
 app.post("/register", (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
-  const id = generateRandomString();
+  const id = userByEmail();
 
   if (!email || !password) {
-    return res.status(400).send("Email and password cannot be blank.");
+    return res.status(403).send("Email and password cannot be blank.");
   }
   if (userByEmail(email)) {
-    return res.status(400).send("A user with that email exists. Use another email.");
+    return res
+      .status(400)
+      .send("A user with that email exists. Use another email.");
   }
   const user = {
     email,
     password,
     id,
-  }
+  };
   tinyURLusers[id] = user;
   console.log(tinyURLusers);
   res.cookie("user_id", id);
@@ -180,8 +202,8 @@ app.post("/urls/:shortURL/delete", (req, res) => {
   const shortURL = req.params.shortURL;
 
   if (
-    req.session.userID &&
-    req.session.userID === urlDatabase[shortURL].userID
+    req.cookies.user_id &&
+    req.cookies.user_id === urlDatabase[shortURL].user_id
   ) {
     delete urlDatabase[shortURL];
     res.redirect("/urls");
@@ -189,14 +211,14 @@ app.post("/urls/:shortURL/delete", (req, res) => {
     const errorMessage = "You are not authorized to do that.";
     res
       .status(401)
-      .render("urls_error", { user: users[req.session.userID], errorMessage });
+      .render("urls_error", { user: users[req.cookies.user_id], errorMessage });
   }
 });
 
 app.post("/urls/:shortURL/edit", (req, res) => {
   if (
     !checkOwner(
-      currentUser(req.session.userId, userDatabase),
+      currentUser(req.cookies.userId, userDatabase),
       req.params.shortURL,
       urlDatabase
     )

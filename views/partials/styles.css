@@ -1,0 +1,232 @@
+
+   
+/*header elements*/
+}
+header {
+width: 100vw;ß
+max-width: 1366px;
+height: calc(100vh - 80px);
+background-color:#2b95fd;
+background-size : cover;
+object-fit: contain;
+overflow: auto;
+display: block;     
+
+}
+
+/*
+h1{
+font-family: 'Roboto', sans-serif;
+font-weight: 700;
+font-size: 52px;
+color:#FFF;
+ text-align: left;
+padding-top: 20%;
+    
+}
+p{
+    font-family: 'Roboto', sans-serif;
+    font-weight: 300;
+    color:#fff;
+    font-size: 22px;
+}
+ .white{
+ font-family: 'Roboto', sans-serif;
+ font-weight: 300;
+color:#fff;
+font-size: 22px;
+margin-top: 29px;
+
+ }
+.subscribe_today{
+display:block;
+margin-top: 20px;
+width: 310px;
+height: 65px;
+background-image : url('images/button-subscribetoday.png');
+background-repeat: no repeat;
+}
+.subscribe_today:hover{
+display:block;
+margin-top: 20px;
+width: 310px;
+height: 65px;
+background-image : url('images/button-subscribetoday_hover.png');
+background-repeat: no repeat;
+}
+/*section your music*/
+
+/*h2{
+font-family: 'Roboto', sans-serif;
+font-weight: 700;    
+font-size: 36px;
+color: #2B95FD;
+text-align: center;
+margin-top: 70px;
+
+} 
+.gray{
+font-family: 'Roboto', sans-serif;
+font-weight: 300;
+color:#959595;
+font-size: 22px;
+text-align: center;
+margin-bottom: 30px;
+
+}
+.cyan_box{
+width: 278px;
+height: 436px;
+background-color:#2b95fd;
+margin: 30px 0px 0px 0px;
+padding-top: 30px;
+background-image : url('images/rect-plan1.png');
+background-repeat: no-repeat;
+background-size : cover;
+border-radius: 10px;
+
+}
+.periwinkle_box{
+    width: 278px;
+    height: 436px;
+    background-color:#4e65ec;
+    margin-top: 30px;
+    padding-top: 30px;
+    background-image : url('images/rect-plan2.png');
+    background-repeat: no-repeat;
+    background-size : cover;
+    border-radius: 10px;
+}
+.violet_box{ 
+    width: 278px;
+    height: 436px;
+    margin-top: 30px;
+    padding-top: 30px;
+    background-color:#7a30d3;
+    background-image : url('images/rect-plan3.png');
+    background-repeat: no-repeat;
+    background-size : cover;
+    border-radius: 10px;    
+ 
+}
+h3{
+    font-family: 'Roboto', sans-serif;
+    font-weight: 500;
+    color:#fff;
+    text-align: center;
+    font-size: 42px;
+}
+h4{
+    font-family: 'Roboto', sans-serif;
+    font-weight: 500;
+    color:#fff;
+    text-align: center;
+    font-size: 24px;
+    margin-bottom: 20px;
+
+}
+h5{
+    font-family: 'Roboto', sans-serif;
+    font-weight: 400;
+    color:#fff;
+    text-align: center;
+    font-size: 18px;
+    line-height: 30px; 
+    margin-bottom: 12px;
+}
+.signup_button{
+    width: 194px;
+    height: 51px;
+    margin-right: 40px;
+    margin-left: 40px;
+    margin-top: 40px;
+    background-image : url('images/button-signup.png');
+    background-repeat: no repeat;
+
+}
+.signup_button:hover{
+    width: 194px;
+    height: 51px;
+    margin-right: 40px;
+    margin-left: 40px;
+    margin-top: 40px;
+    background-image : url('images/button-signup_hover.png');
+    background-repeat: no repeat;
+    opacity: 0.6;
+
+/*section about
+}
+
+.aboutimage_wrapper{
+    width: 100%; /* or any custom size 
+    height: 100%;
+    min-height: 720px; 
+    object-fit: contain;
+    background-image : url('images/about-photo.png'); 
+    background-repeat: no repeat;
+    background-size: cover; 
+   margin-top: 30px;
+   overflow: auto;
+   display: flex;
+   align-items: center;
+   justify-content: center;	
+
+}
+.about_bodytext1{
+width: 278px;
+display: inline-block;
+text-align: justify;
+
+
+
+}
+.about_bodytext2{
+width: 278px;
+display: inline-block;
+text-align: justify;
+}
+.about_bodytext3{
+width: 278px;
+display: inline-block;
+text-align: justify;
+}
+.about_icons{
+display: block;
+margin-left: auto;
+margin-right: auto;
+margin-top: 10%;
+ margin-bottom: 50px;
+}
+/*section artist albums
+.artist_albums{
+    margin-top: 30px;
+/*footer
+}
+.jukebox_footer {
+    width:100%;
+height: 80px;
+    padding-top: 50px;
+    padding-bottom: 50px;
+    margin-top: 60px;
+    color: #99979c;
+    text-align: left;
+    background-color: #2391fd;
+}
+.bottom_logo{
+    vertical-align: middle;
+    display: inline-block;
+    margin-top:-9px;
+}
+.hidden-xs{
+    display: inline-block;
+    text-align: right;
+    float: right;
+    margin-top:-14px;
+}
+td{
+    padding-left: 12px;
+}
+
+
+
+
