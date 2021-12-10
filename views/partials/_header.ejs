@@ -1,3 +1,6 @@
+<link href="styles.css" rel="stylesheet" type="text/css">
+
+
 <header>
   <nav class="navbar navbar-expand-md navbar-dark bg-success" >
     <a class="navbar-brand" href="/urls">TinyApp</a>
@@ -11,15 +14,13 @@
       </div>
     </div>
     <div style="height: 100px; width: 400px;  ">
-<% if (username) { %>
-  <%= username %>
+<% if (tinyURLusers) { %>
+  <%= tinyURLusers %>
   <% } %>
   <form action="/login" method="POST">
-    <label style="margin-left:35px">Enter Email</label>
-    <input type="email" name="username" placeholder="Enter email" style ="height: 20px margin-right: 10px margin-bottom: 20px padding: 0px"><br>
-    <label style="margin-left:41px">Password:</label>
-    <input type="password" name="password" placeholder="Enter password" style ="height: 20px margin-bottom: 20px padding: 0px"><br>
-    <button type="submit" class="btn btn-primary btn-sm" style="display: block; margin: 0 auto;" href="/login">Log In</button>
+    <label style='margin-top:38px;margin-left:40px;margin-right:0;' >Enter Email</label>
+    <input type="email" name="username" placeholder="Enter email" style ="height: 20px margin-bottom: 20px padding: 0px">
+    <button type="submit" class="btn btn-primary btn-sm" style="margin: 0 auto;" href="/login">Log In</button>
   </form>
 
     </div>
