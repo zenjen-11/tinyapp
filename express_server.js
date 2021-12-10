@@ -46,6 +46,16 @@ const urlsUser = function(id) {
   return userUrls;
 };
 
+const getCurrentUserID = function(req) {
+  let userID = null
+  if (!req.cookies['user_id']) {
+    userID = null
+  } else {
+    userID = req.cookies['user_id']
+  }
+return userID
+}
+
 //// Variables
 
 const urlDatabase = {
@@ -66,37 +76,34 @@ const tinyURLusers = {
 // Root GET
 
 app.get("/", (req, res) => {
-  // if (req.cookies.user_id) {
   res.redirect("/urls");
-  // } else {
-  //   res.redirect('/login');
-  // }
+
 });
 
 // GET url index page
 app.get("/urls", (req, res) => {
   console.log('anything', req.cookies)
   const userID = req.cookies['user_id']
-  // const userUrls = urlsUser(userID, urlDatabase);
   const templateVars = { urls: urlDatabase, userID };
   res.render("urls_index", templateVars);
 });
 
 // GET url new page
 app.get("/urls/new", (req, res) => {
+  const userID = req.cookies['user_id']
+  const userUrls = urlsUser(userID, urlDatabase);
+  const templateVars = {
+    shortURL: req.params.shortURL,
+    longURL: urlDatabase[req.params.shortURL], userID: getCurrentUserID(req)
+  };
+  
   res.render("urls_new");
 });
 
 //GET login page
 app.get("/login", (req, res) => {
   console.log('cookies', req.cookies)
-  let userID = null
-  if (!req.cookies['user_id']) {
-    userID = null
-  } else {
-    userID = req.cookies['user_id']
-  }
-  const templateVars = {userID};
+  const templateVars = {userID: getCurrentUserID(req)};
   // const userUrls = urlsUser(user_id, urlDatabase);
   res.render("urls_login", templateVars);
 });
@@ -104,7 +111,7 @@ app.get("/login", (req, res) => {
 // GET url register page
 
 app.get("/register", (req, res) => {
-  const templateVars = { tinyURLusers: '' };
+  const templateVars = { tinyURLusers: '', userID: getCurrentUserID(req)};
   res.render("urls_register", templateVars);
 });
 
@@ -114,7 +121,7 @@ app.get("/urls/:shortURL", (req, res) => {
   const userUrls = urlsUser(userID, urlDatabase);
   const templateVars = {
     shortURL: req.params.shortURL,
-    longURL: urlDatabase[req.params.shortURL],
+    longURL: urlDatabase[req.params.shortURL], userID: getCurrentUserID(req)
   };
   res.render("urls_show", templateVars);
 });
@@ -166,7 +173,7 @@ app.post("/login", (req, res) => {
     res.redirect("/urls");
 
   } else {
-    return res.status(403).send("user not found")
+    return res.status(403).send("User not found.")
   }
 
 
