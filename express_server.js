@@ -3,7 +3,7 @@ const app = express();
 const PORT = 8080; // default port 8080
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
-// const bcrypt = require('bcryptjs');
+const bcrypt = require('bcryptjs');
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser()); // bring in cookie-parser
@@ -216,7 +216,7 @@ app.post('/logout', (req, res) => {
 app.post("/register", (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
-  // const password: bcrypt.hashSync(req.body.password, 10)
+  const password: bcrypt.hashSync(req.body.password, 10)
   const id = userByEmail(email);
   console.log(id)
 
