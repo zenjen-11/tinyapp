@@ -3,6 +3,7 @@ const app = express();
 const PORT = 8080; // default port 8080
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
+// const bcrypt = require('bcryptjs');
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser()); // bring in cookie-parser
@@ -93,7 +94,7 @@ app.get("/urls", (req, res) => {
   console.log('anything', req.cookies)
   const userID = req.cookies['user_id']
   const userUrls = urlsUser(userID);
-  const templateVars = { urls: userUrls, userID, tinyURLusers };
+  const templateVars = { urls: userUrls, user: tinyURLusers[userID], tinyURLusers };
   res.render("urls_index", templateVars);
 });
 
@@ -105,7 +106,7 @@ if (req.cookies['user_id']) {
   let templateVars = {
       shortURL: req.params.shortURL,
       longURL: urlDatabase[req.params.shortURL], userID: getCurrentUserID(req),
-      tinyURLusers
+      user: null
     };
   res.render('urls_new', templateVars);
 } else {
@@ -115,7 +116,10 @@ if (req.cookies['user_id']) {
 
 //GET login page
 app.get("/login", (req, res) => {
-  const templateVars = {userID: getCurrentUserID(req)};
+
+  //1. Initially = userId "1023"
+  //2. Pass complete user = {id: "103", email:"rohit@gmail.com",password:"1343"}
+  const templateVars = {user: null};
   // const userUrls = urlsUser(user_id, urlDatabase);
   res.render("urls_login", templateVars);
   res.redirect('/urls/new');
@@ -124,7 +128,7 @@ app.get("/login", (req, res) => {
 // GET url register page
 
 app.get("/register", (req, res) => {
-  const templateVars = { tinyURLusers: '', userID: getCurrentUserID(req)};
+  const templateVars = { user: null, userID: getCurrentUserID(req)};
   res.render("urls_register", templateVars);
 });
 
@@ -135,7 +139,7 @@ app.get("/urls/:shortURL", (req, res) => {
   const templateVars = {
     shortURL: req.params.shortURL,
     longURL: urlDatabase[req.params.shortURL], userID: getCurrentUserID(req),
-    urls: urlDatabase, tinyURLusers
+    urls: urlDatabase, user: null
   };
   res.render("urls_show", templateVars);
 });
@@ -152,7 +156,7 @@ app.get("/u/:shortURL", (req, res) => {
 });
 
 app.get("/urls.json", (req, res) => {
-  res.json(urlDatabase);
+  res.send(users);
 });
 
 app.get("/set", (req, res) => {
@@ -212,6 +216,7 @@ app.post('/logout', (req, res) => {
 app.post("/register", (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
+  // const password: bcrypt.hashSync(req.body.password, 10)
   const id = userByEmail(email);
   console.log(id)
 
@@ -237,8 +242,9 @@ app.post("/register", (req, res) => {
 // POST longURL
 // LongURL in the database
 app.post('/urls/:shortURL', (req, res) => {
-  const shortURL = req.params.shortURL;
-  urlDatabase[shortURL].longURL = req.body.updatedURL;
+  if (req.cookies['user_id'] === urlDatabase[shortURL].userID) {
+    urlDatabase[shortURL].longURL = req.body.updatedURL;
+  }
   res.redirect(`/urls/${shortURL}`);
 });
 
