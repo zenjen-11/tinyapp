@@ -12,7 +12,7 @@ app.set("view engine", "ejs");
 ///// Functions
 
 // Generate random string function
-const generateRandomString = function () {
+const generateRandomString = function() {
   const chars =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
   let randomString = "";
@@ -116,10 +116,7 @@ if (req.cookies['user_id']) {
 
 //GET login page
 app.get("/login", (req, res) => {
-
-  //1. Initially = userId "1023"
-  //2. Pass complete user = {id: "103", email:"rohit@gmail.com",password:"1343"}
-  const templateVars = {user: null};
+  const templateVars = { user: null, userID: getCurrentUserID(req)};
   // const userUrls = urlsUser(user_id, urlDatabase);
   res.render("urls_login", templateVars);
   res.redirect('/urls/new');
@@ -190,15 +187,16 @@ app.post("/urls", (req, res) => {
 // POST login page
 app.post("/login", (req, res) => {
   console.log("req.body", req.body);
-  const password = req.body.password;
+  // const password = req.body.password;
   const email = req.body.email;
   const user = userByEmail(email, tinyURLusers);
   console.log('popcorn', user)
-  
-  // happy path
+
   if(user) {
-    res.cookie("user_id", tinyURLusers[user.id].email);
-    res.redirect("/urls");
+    if (bcrypt.compareSync(req.body.password, user.password)) {
+      res.cookie("user_id", tinyURLusers[user.id].email);
+      res.redirect("/urls");
+    }
 
   } else {
     return res.status(403).send("User not found.")
@@ -211,14 +209,13 @@ app.post('/logout', (req, res) => {
   res.redirect('/urls');
 })
 
-
 // POST register page
 app.post("/register", (req, res) => {
   const email = req.body.email;
-  const password = req.body.password;
-  const password: bcrypt.hashSync(req.body.password, 10)
+  // const password = req.body.password;
+  const password = bcrypt.hashSync(req.body.password, 10);
   const id = userByEmail(email);
-  console.log(id)
+  console.log(id, "This is id")
 
   if (!email || !password) {
     return res.status(403).send("Email and password cannot be blank.");
@@ -250,7 +247,6 @@ app.post('/urls/:shortURL', (req, res) => {
 
 
 // POST delete url
-
 app.post("/urls/:shortURL/delete", (req, res) => {
   const shortURL = req.params.shortURL;
 
