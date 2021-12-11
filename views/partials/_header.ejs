@@ -14,7 +14,7 @@
       <% if (userID) { %>
         <form action="/logout" method="POST">
           <div>
-            Logged in as: <%= userID %>
+            Logged in as: <%= tinyURLusers[userID].email %>
             <button type="submit" class="btn btn-success">Logout</button>
           </div>
         </form>
