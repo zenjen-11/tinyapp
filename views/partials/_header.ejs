@@ -11,10 +11,10 @@
       </div>
     </div>
     <div style="height: 100px; width: 400px;  ">
-      <% if (userID) { %>
+      <% if (user) { %>
         <form action="/logout" method="POST">
           <div>
-            Logged in as: <%= tinyURLusers[userID].email %>
+            Logged in as: <%= user.email %>
             <button type="submit" class="btn btn-success">Logout</button>
           </div>
         </form>
