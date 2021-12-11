@@ -58,9 +58,17 @@ return userID
 
 //// Variables
 
+// const urlDatabase = {}
+
 const urlDatabase = {
-  b2xVn2: "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com",
+  b6UTxQ: {
+     longURL: "http://www.lighthouselabs.ca",
+     userID: "123"
+  },
+  i3BoGr: {
+      longURL: "https://www.google.ca",
+      userID: "456"
+  }
 };
 
 const tinyURLusers = {
@@ -90,22 +98,35 @@ app.get("/urls", (req, res) => {
 
 // GET url new page
 app.get("/urls/new", (req, res) => {
-  const userID = req.cookies['user_id']
-  const userUrls = urlsUser(userID, urlDatabase);
-  const templateVars = {
-    shortURL: req.params.shortURL,
-    longURL: urlDatabase[req.params.shortURL], userID: getCurrentUserID(req)
-  };
+  // const userID = req.cookies['user_id']
+  // const userUrls = urlsUser(userID, urlDatabase);
+  // const templateVars = {
+  //   shortURL: req.params.shortURL,
+  //   longURL: urlDatabase[req.params.shortURL], userID: getCurrentUserID(req)
+  // };
   
-  res.render("urls_new");
+  // res.render("urls_new");
+// });
+
+// let templateVars = {user: users[req.cookies['user_id']]};
+// res.render('urls_new', templateVars);
+if (req.cookies['user_id']) {
+  let templateVars = {
+      shortURL: req.params.shortURL,
+      longURL: urlDatabase[req.params.shortURL], userID: getCurrentUserID(req)
+    };
+  res.render('urls_new', templateVars);
+} else {
+  res.redirect('/login');
+}
 });
 
 //GET login page
 app.get("/login", (req, res) => {
-  console.log('cookies', req.cookies)
   const templateVars = {userID: getCurrentUserID(req)};
   // const userUrls = urlsUser(user_id, urlDatabase);
   res.render("urls_login", templateVars);
+  res.redirect('/urls/new');
 });
 
 // GET url register page
@@ -119,15 +140,18 @@ app.get("/register", (req, res) => {
 app.get("/urls/:shortURL", (req, res) => {
   const userID = req.cookies['user_id']
   const userUrls = urlsUser(userID, urlDatabase);
+  console.log(urlDatabase);
+  console.log(userID)
   const templateVars = {
     shortURL: req.params.shortURL,
-    longURL: urlDatabase[req.params.shortURL], userID: getCurrentUserID(req)
+    longURL: urlDatabase[req.params.shortURL].longURL, 
+    userID: getCurrentUserID(req)
   };
   res.render("urls_show", templateVars);
 });
 
 app.get("/u/:shortURL", (req, res) => {
-  if (urlDatabase[req.params.shortURL]) {
+  if (urlDatabase[req.params.shortURL.longURL]) {
     res.redirect(longURL);
   } else {
     const errorMessage = "This short URL does not exist.";
@@ -154,9 +178,13 @@ app.get("/fetch", (req, res) => {
 // POST urls post page
 app.post("/urls", (req, res) => {
   const forShortURL = generateRandomString();
-  urlDatabase[forShortURL] = req.body.longURL;
+  // urlDatabase[forShortURL] = req.body.longURL;
+  urlDatabase[shortURL] = {
+    longURL: req.body.longURL,
+    userID: req.cookies['user_id']
+  };
   const templateVars = { urls: urlDatabase };
-  res.redirect(`/urls/${forShortURL}`); // Respond with 'Ok' (we will replace this)
+  res.redirect(`/urls/${shortURL}`); // Respond with 'Ok' (we will replace this)
 });
 
 // POST login page
@@ -176,13 +204,20 @@ app.post("/login", (req, res) => {
     return res.status(403).send("User not found.")
   }
 
-
 });
+// logout 
+app.post('/logout', (req, res) => {
+  res.clearCookie('user_id');
+  res.redirect('/urls');
+})
+
+
 // POST register page
 app.post("/register", (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
-  const id = userByEmail();
+  const id = userByEmail(email);
+  console.log(id)
 
   if (!email || !password) {
     return res.status(403).send("Email and password cannot be blank.");
@@ -202,6 +237,15 @@ app.post("/register", (req, res) => {
   res.cookie("user_id", id);
   res.redirect("/urls");
 });
+
+// POST longURL
+// LongURL in the database
+app.post('/urls/:shortURL', (req, res) => {
+  const shortURL = req.params.shortURL;
+  urlDatabase[shortURL].longURL = req.body.updatedURL;
+  res.redirect(`/urls/${shortURL}`);
+});
+
 
 // POST delete url
 
