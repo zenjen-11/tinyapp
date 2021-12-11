@@ -92,28 +92,20 @@ app.get("/", (req, res) => {
 app.get("/urls", (req, res) => {
   console.log('anything', req.cookies)
   const userID = req.cookies['user_id']
-  const templateVars = { urls: urlDatabase, userID };
+  const userUrls = urlsUser(userID);
+  const templateVars = { urls: userUrls, userID, tinyURLusers };
   res.render("urls_index", templateVars);
 });
 
 // GET url new page
 app.get("/urls/new", (req, res) => {
-  // const userID = req.cookies['user_id']
-  // const userUrls = urlsUser(userID, urlDatabase);
-  // const templateVars = {
-  //   shortURL: req.params.shortURL,
-  //   longURL: urlDatabase[req.params.shortURL], userID: getCurrentUserID(req)
-  // };
-  
-  // res.render("urls_new");
-// });
-
-// let templateVars = {user: users[req.cookies['user_id']]};
-// res.render('urls_new', templateVars);
+  const userID = req.cookies['user_id']
+  const userUrls = urlsUser(userID, urlDatabase,);
 if (req.cookies['user_id']) {
   let templateVars = {
       shortURL: req.params.shortURL,
-      longURL: urlDatabase[req.params.shortURL], userID: getCurrentUserID(req)
+      longURL: urlDatabase[req.params.shortURL], userID: getCurrentUserID(req),
+      tinyURLusers
     };
   res.render('urls_new', templateVars);
 } else {
@@ -140,12 +132,10 @@ app.get("/register", (req, res) => {
 app.get("/urls/:shortURL", (req, res) => {
   const userID = req.cookies['user_id']
   const userUrls = urlsUser(userID, urlDatabase);
-  console.log(urlDatabase);
-  console.log(userID)
   const templateVars = {
     shortURL: req.params.shortURL,
-    longURL: urlDatabase[req.params.shortURL].longURL, 
-    userID: getCurrentUserID(req)
+    longURL: urlDatabase[req.params.shortURL], userID: getCurrentUserID(req),
+    urls: urlDatabase, tinyURLusers
   };
   res.render("urls_show", templateVars);
 });
@@ -179,12 +169,18 @@ app.get("/fetch", (req, res) => {
 app.post("/urls", (req, res) => {
   const forShortURL = generateRandomString();
   // urlDatabase[forShortURL] = req.body.longURL;
-  urlDatabase[shortURL] = {
-    longURL: req.body.longURL,
-    userID: req.cookies['user_id']
-  };
-  const templateVars = { urls: urlDatabase };
-  res.redirect(`/urls/${shortURL}`); // Respond with 'Ok' (we will replace this)
+
+  if (req.cookies['user_id']) {
+    urlDatabase[forShortURL] = {
+      longURL: req.body.longURL,
+      userID: req.cookies['user_id']
+    };
+    res.redirect(`/urls/${forShortURL}`); // Respond with 'Ok' (we will replace this)
+
+    
+  } else {
+    res.redirect('/login');
+  }
 });
 
 // POST login page
