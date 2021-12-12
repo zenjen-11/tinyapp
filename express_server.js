@@ -15,16 +15,16 @@ const {
   userByEmail, generateRandomString, getCurrentUserID,} = require("./helpers");
 
 
-  const urlsUser = function(id) {
-    let userUrls = {};
+const urlsUser = function(id) {
+  let userUrls = {};
   
-    for (const shortURL in urlDatabase) {
-      if (urlDatabase[shortURL].userID === id) {
-        userUrls[shortURL] = urlDatabase[shortURL];
-      }
+  for (const shortURL in urlDatabase) {
+    if (urlDatabase[shortURL].userID === id) {
+      userUrls[shortURL] = urlDatabase[shortURL];
     }
-    return userUrls;
-  };
+  }
+  return userUrls;
+};
   
 
 //// Variables
@@ -71,7 +71,6 @@ app.get("/urls", (req, res) => {
 // GET url new page
 app.get("/urls/new", (req, res) => {
   const userID = req.session["user_id"];
-  const userUrls = urlsUser(userID, urlDatabase);
   if (req.session["user_id"]) {
     let templateVars = {
       shortURL: req.params.shortURL,

@@ -5,7 +5,7 @@ TinyApp is a full stack web application built with Node and Express that allows 
 ## Final Product
 !["Register new user page for app."](https://github.com/zenjen-11/tinyapp/blob/main/docs/Register_page.png)
 
-!["Create new url using app."](https://github.com/zenjen-11/tinyapp/blob/main/docs/Create_url_page.png)"
+!["Create new url using app."](https://github.com/zenjen-11/tinyapp/blob/main/docs/Create_url_page.png)
 
 !["Login page for existing user of app."](https://github.com/zenjen-11/tinyapp/blob/main/docs/Login_page.png)
 
