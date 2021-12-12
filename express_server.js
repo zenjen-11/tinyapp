@@ -26,7 +26,7 @@ const generateRandomString = function() {
 
 // Store old users and new users function
 const userByEmail = function(email, data) {
-  console.log('Hello', email, data)
+  console.log('Hello I am testing user by email', email, data)
   for (const userr in data) {
     if (data[userr].email === email) {
       return data[userr];
@@ -168,7 +168,7 @@ app.get("/fetch", (req, res) => {
 // POST urls post page
 app.post("/urls", (req, res) => {
   const forShortURL = generateRandomString();
-  // urlDatabase[forShortURL] = req.body.longURL;
+  // urlDatabase[session] = req.body.longURL;
 
   if (req.session['user_id']) {
     urlDatabase[forShortURL] = {
@@ -255,7 +255,8 @@ app.post("/urls/:shortURL/delete", (req, res) => {
   ) {
     delete urlDatabase[shortURL];
     res.redirect("/urls");
-  } else {
+  } 
+  else {
     const errorMessage = "You are not authorized to do that.";
     res
       .status(401)
