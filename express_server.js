@@ -1,6 +1,6 @@
 const express = require("express");
 const app = express();
-const PORT = 8080; // default port 8080
+const PORT = 8080;
 const bodyParser = require("body-parser");
 const cookieSession = require("cookie-session");
 const bcrypt = require("bcryptjs");
@@ -11,55 +11,23 @@ app.set("view engine", "ejs");
 
 ///// Functions
 
-// Generate random string function
-const generateRandomString = function() {
-  const chars =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-  let randomString = "";
+const {
+  userByEmail, generateRandomString, getCurrentUserID,} = require("./helpers");
 
-  while (randomString.length < 6) {
-    randomString += chars[Math.floor(Math.random() * chars.length)];
-  }
 
-  return randomString;
-};
-
-// Store old users and new users function
-const userByEmail = function(email, data) {
-  console.log("Hello I am testing user by email", email, data);
-  for (const userr in data) {
-    if (data[userr].email === email) {
-      return data[userr];
+  const urlsUser = function(id) {
+    let userUrls = {};
+  
+    for (const shortURL in urlDatabase) {
+      if (urlDatabase[shortURL].userID === id) {
+        userUrls[shortURL] = urlDatabase[shortURL];
+      }
     }
-  }
-  return undefined;
-};
-
-// Store urls for users
-const urlsUser = function(id) {
-  let userUrls = {};
-
-  for (const shortURL in urlDatabase) {
-    if (urlDatabase[shortURL].userID === id) {
-      userUrls[shortURL] = urlDatabase[shortURL];
-    }
-  }
-  return userUrls;
-};
-
-const getCurrentUserID = function(req) {
-  let userID = null;
-  if (!req.session["user_id"]) {
-    userID = null;
-  } else {
-    userID = req.session["user_id"];
-  }
-  return userID;
-};
+    return userUrls;
+  };
+  
 
 //// Variables
-
-// Const urlDatabase = {}
 
 const urlDatabase = {
   b6UTxQ: {
@@ -92,7 +60,6 @@ app.get("/", (req, res) => {
 app.get("/urls", (req, res) => {
   const userID = req.session["user_id"];
   const userUrls = urlsUser(userID);
-  console.log("userUrls", userUrls);
   const templateVars = {
     urls: userUrls,
     user: tinyURLusers[userID],
@@ -121,7 +88,6 @@ app.get("/urls/new", (req, res) => {
 //GET login page
 app.get("/login", (req, res) => {
   const templateVars = { user: null, userID: getCurrentUserID(req) };
-  // const userUrls = urlsUser(user_id, urlDatabase);
   res.render("urls_login", templateVars);
 });
 
@@ -134,7 +100,6 @@ app.get("/register", (req, res) => {
 // GET shortened url page that directs to url_show page
 app.get("/urls/:shortURL", (req, res) => {
   const userID = req.session["user_id"];
-  // const userUrls = urlsUser(userID, urlDatabase);
   const templateVars = {
     shortURL: req.params.shortURL,
     longURL: urlDatabase[req.params.shortURL],
@@ -165,14 +130,12 @@ app.get("/urls.json", (req, res) => {
 // POST urls post page
 app.post("/urls", (req, res) => {
   const forShortURL = generateRandomString();
-  // urlDatabase[session] = req.body.longURL;
 
   if (req.session["user_id"]) {
     urlDatabase[forShortURL] = {
       longURL: req.body.longURL,
       userID: req.session["user_id"],
     };
-    console.log("urlDatabase", urlDatabase);
     res.redirect(`/urls/${forShortURL}`); // Respond with 'Ok' (we will replace this)
   } else {
     res.redirect("/login");
@@ -181,11 +144,8 @@ app.post("/urls", (req, res) => {
 
 // POST login page
 app.post("/login", (req, res) => {
-  console.log("req.body", req.body);
-  // const password = req.body.password;
   const email = req.body.email;
   const user = userByEmail(email, tinyURLusers);
-  console.log("popcorn", user);
 
   if (user) {
     if (bcrypt.compareSync(req.body.password, user.password)) {
@@ -205,10 +165,8 @@ app.post("/logout", (req, res) => {
 // POST register page
 app.post("/register", (req, res) => {
   const email = req.body.email;
-  // const password = req.body.password;
   const password = bcrypt.hashSync(req.body.password, 10);
   const id = generateRandomString();
-  console.log(id, "This is id");
 
   if (!email || !password) {
     return res.status(403).send("Email and password cannot be blank.");
@@ -224,7 +182,6 @@ app.post("/register", (req, res) => {
     id,
   };
   tinyURLusers[id] = user;
-  console.log(tinyURLusers);
   req.session.user_id = id;
   res.redirect("/urls");
 });
@@ -246,19 +203,22 @@ app.post("/urls/:shortURL/delete", (req, res) => {
     delete urlDatabase[shortURL];
     res.redirect("/urls");
   }
-  
-
 });
 
 app.post("/urls/:shortURL", (req, res) => {
   const shortURL = req.params.shortURL;
 
-  if (req.session.userID  && req.session.userID === urlDatabase[shortURL].userID) {
+  if (
+    req.session.userID &&
+    req.session.userID === urlDatabase[shortURL].userID
+  ) {
     urlDatabase[shortURL].longURL = req.body.updatedURL;
     res.redirect(`/urls`);
   } else {
-    const errorMessage = 'You are not authorized to do that.';
-    res.status(401).render('urls_error', {user: users[req.session.userID], errorMessage});
+    const errorMessage = "You are not authorized to do that.";
+    res
+      .status(401)
+      .render("urls_error", { user: users[req.session.userID], errorMessage });
   }
 });
 
